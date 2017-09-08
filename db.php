@@ -2,7 +2,7 @@
 class pdoC{
     private $dsn='mysql:host=localhost;dbname=vote';
     private $user='root';
-    private $pass='';
+    private $pass='63508790';
     private $condition=array();
     private $prepare;
     private $execute;
@@ -11,7 +11,7 @@ class pdoC{
 	private $query;
 
     function __construct($pconnect=false){
-        $this->_condition=array(PDO::ATTR_PERSISTENT => $pconnect);
+        $this->condition=array(PDO::ATTR_PERSISTENT => $pconnect);
         $this->connect();
     }
     public function connect(){

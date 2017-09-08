@@ -19,25 +19,21 @@ $vid=$_GET[vid];
 }
 </style>
 <?php
-    $con=mysql_connect("localhost","root","");
-    if(!$con){
-        die('Conld not connect :'.mysql_error());
-        }
-    mysql_query("set names utf8");
-    mysql_select_db("vote",$con);
-    $get_aid=mysql_query("SELECT `a_name`, `a_quan` FROM `activities` WHERE `v_id` = '$vid'");
-    if(mysql_num_rows(mysql_query("SELECT * FROM `votes` WHERE `v_id` = '$vid'"))==0){
-        $url="https://www.wf163.com/lxy/vote/choose/choose.php";
+$db=new pdoC;
+    $get_aid=$db->pdo_pre("SELECT `a_name`, `a_quan` FROM `activities` WHERE `v_id` = ? ");
+    $db->pdo_execute(array($vid));
+    $votes=$db->pdo_pre("SELECT * FROM `votes` WHERE `v_id` = ? ");
+    $db->pdo_execute(array($vid));
+    $check=$db->pdo_fetch($votes);
+    if(empty($check)){
+        $url="https://www.wf163.com/lxy/vote3.0/choose/choose.php";
         echo "<META HTTP-EQUIV=\"refresh\" CONTENT=\"0;url=$url\">";}
     if(empty($get_aid)){$err= "投票为空";
     } else {
-        while($row=mysql_fetch_array($get_aid))
-    {
-    $act[]=$row;
-    }
-    mysql_close($con);
+        $row=$db->pdo_fetch($get_aid);
+    $db->close();
     $num=1;
-    foreach ($act as $key => $value) {
+    foreach ($row as $key => $value) {
             $inner.="<tr><td>".$num."</td><td>".$value[0]."</td><td><div class='piao' style='width:".($value[1]*50)."'></div></td><td>".$value[1]."</td></tr>";
             $num+=1;
         }
@@ -82,3 +78,4 @@ $vid=$_GET[vid];
     <div id="footer">
     </div>
 </body>
+</html>

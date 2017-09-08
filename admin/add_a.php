@@ -76,24 +76,19 @@ include "../actions.php";  ?>
     <?php
     $ip1=$_SERVER["REMOTE_ADDR"];
     $vid=$_GET[vid];
-    $con=mysql_connect("localhost","root","");
-    if(!$con){
-        die('Conld not connect :'.mysql_error());
-    }
-    mysql_query("set names utf8");
-    mysql_select_db("vote",$con);
-    $votes=mysql_query("SELECT * FROM `votes` WHERE `v_id` = '$vid'");
-    if(mysql_num_rows($votes)==0){
-        $url="https://www.wf163.com/lxy/vote2.0/choose/choose.php";
+    $pdo=new pdoC;
+    $votes=$pdo->pdo_pre("SELECT * FROM `votes` WHERE `v_id` = ? ");
+    $pdo->pdo_execute(array($vid));
+    if(empty($pdo->pdo_fetch($votes))){
+        $url="https://www.wf163.com/lxy/vote3.0/choose/choose.php";
         echo "<META HTTP-EQUIV=\"refresh\" CONTENT=\"0;url=$url\">";}
         else{
-            $time=mysql_fetch_assoc($votes)[v_time];
-        $get_aid=mysql_query("SELECT * FROM `activities` WHERE `v_id` = '$vid'");
-        while($row=mysql_fetch_array($get_aid))
-        {
-            $act[]=$row;
-        }
-        mysql_close($con);
+            $time=$pdo->pdo_fetch($votes)[v_time];
+        $get_aid=$pdo->pdo_pre("SELECT * FROM `activities` WHERE `v_id` = ?");
+        $pdo->pdo_execute(array($vid));
+        $act=$pdo->pdo_fetch($get_aid);
+        $pdo->close();
+        $pdo=null;
         $num=1;
         foreach ($act as $key => $value) {
             $inner.="<tr><td>".($num)."</td><td>".$value[2]."</td><td><input name='submit[]' type='checkbox' value='".$value[0]."'></td></tr>";
@@ -133,7 +128,7 @@ $(document).ready(function(){
             </div>
             <div class="row" >
                 <div class="col-md-9" >
-                <form action="/lxy/vote2.0/submit/form.php?vid=<?php echo $vid ?>" method="POST" name="submits">
+                <form action="/lxy/vote3.0/submit/form.php?vid=<?php echo $vid ?>" method="POST" name="submits">
             <table class="table">
                     <thead><tr>
                             <th width="5%" >序号</th>

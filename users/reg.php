@@ -3,9 +3,10 @@ include "../actions.php";
 session_start();
 $db=new pdoC;
 function register($user,$pw){//注册需要帐号名称和密码,加入ip为了控制注册数量
+    GLOBAL $db;
     $pword=md5($user.$pw);
     $ip=$_SERVER['REMOTE_ADDR'];
-    $query1="SELECT * FROM `users` WHERE `ip` = '$ip'";
+    $db->query("SELECT * FROM `users` WHERE `ip` = '$ip' ");
     if(mysql_num_rows(mysql_query($query1))){
         return "此ip已经注册 请<a href='login.php'>登录</a>";
     } else {

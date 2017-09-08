@@ -1,15 +1,14 @@
 <?php
+    include "../db.php";
     $v_name=$_GET[add_v];
     $v_time=$_GET[time];
+    $db=new pdoC;
+    $db->pdo_pre("INSERT INTO `vote`.`votes`  (`v_id`, `v_name`,`v_time`) VALUES ( ? , ? , ? )");
+    $executes=array(NULL, $v_name, $v_time);
+    $db->pdo_execute($executes);
+    $db->close();
+    $db=null;
     echo "已经新建完成 正在跳转".$v_name;
-    $con=mysql_connect("localhost","root","");
-    if(!$con){
-        die('Conld not connect :'.mysql_error());
-        }
-    mysql_query("set names utf8");
-    mysql_select_db("vote",$con);
-    mysql_query("INSERT INTO `vote`.`votes`  (`v_id`, `v_name`,`v_time`) VALUES (NULL, '$v_name','$v_time')");
-    mysql_close();
     ?>
 <!DOCTYPE html>
 <html>
